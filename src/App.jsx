@@ -84,6 +84,31 @@ function App() {
     }
   };
 
+  const handleUpdate = async (id, newText, newDeadline) => {
+    const todoForUpdate = todos.find((todo) => todo.id === id);
+    if (!todoForUpdate) return;
+    const updatedTodo = {
+      ...todoForUpdate,
+      text: newText,
+      deadline: newDeadline,
+    };
+    const updatedTodoList = todos.map((todo) =>
+      todo.id === id ? updatedTodo : todo,
+    );
+    setTodos(updatedTodoList);
+    try {
+      await fetch(`${API_URL}/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-type': 'application/json' },
+        body: JSON.stringify(updatedTodo),
+      });
+      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(updatedTodoList));
+    } catch (error) {
+      console.error('помилка оновлення', error);
+      setTodos(todos);
+    }
+  };
+
   const toggleCompleted = async (id) => {
     const todoForUpdate = todos.find((todo) => todo.id === id);
 
@@ -153,7 +178,7 @@ function App() {
       <ToggleTheme theme={theme} toggleTheme={() => toggleTheme(setTheme)} />
       <div className="mx-auto flex flex-col gap-3">
         <h1 className="text-4xl font-bold text-center text-gray-800 dark:text-white mb-8">
-          <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-purple-500">
+          <span className="bg-clip-text text-transparent bg-linear-to-r from-blue-500 to-purple-500">
             My Todo App
           </span>
         </h1>
@@ -167,6 +192,7 @@ function App() {
                 setDelitingID(todo.id);
               }}
               onToggleCompleted={toggleCompleted}
+              onUpdate={handleUpdate}
             />
           ))}
         </div>

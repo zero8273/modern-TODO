@@ -10,6 +10,7 @@ export function AddTodo({ onAdd }) {
     if (text.trim()) {
       onAdd(text, deadline);
       setText('');
+      setShowDeadlineInput(false);
     }
   };
 
