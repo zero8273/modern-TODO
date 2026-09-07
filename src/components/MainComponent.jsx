@@ -10,6 +10,7 @@ const MainComponent = ({
   setDelitingID,
   todos,
   toggleCompleted,
+  onReorder,
 }) => {
   const [filter, setFilter] = useState('all');
   const filteredTodos = todos.filter((todo) => {
@@ -27,6 +28,7 @@ const MainComponent = ({
         setDelitingID={setDelitingID}
         todos={filteredTodos}
         toggleCompleted={toggleCompleted}
+        onReorder={onReorder}
       />
     </div>
   );

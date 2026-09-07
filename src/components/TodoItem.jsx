@@ -1,11 +1,31 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import TodoInformation from './TodoInformation';
+import { useSortable } from '@dnd-kit/sortable';
+import TodoEditForm from './TodoEditForm';
 
 export const TodoItem = ({ todo, onDelete, onToggleCompleted, onUpdate }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editText, setEditText] = useState(todo.text);
   const [editDeadline, setEditDeadline] = useState(todo.deadline || '');
   const editFormRef = useRef(null);
+
+  const {
+    setNodeRef,
+    attributes,
+    listeners,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: todo.id });
+
+  const dragStyles = {
+    transform: transform
+      ? `translate(${transform.x}px, ${transform.y}px)`
+      : undefined,
+    transition,
+    zIndex: isDragging ? 1 : 'auto',
+    opacity: isDragging ? 0.8 : 1,
+  };
 
   const handleToggle = () => {
     onToggleCompleted(todo.id);
@@ -32,9 +52,16 @@ export const TodoItem = ({ todo, onDelete, onToggleCompleted, onUpdate }) => {
   }, [isEditing, handleSave]);
   return (
     <div
+      ref={setNodeRef}
+      {...attributes}
+      style={dragStyles}
       className="group flex items-center 
     justify-between p-4 gap-3 bg-white dark:bg-page-dark rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300 border border-gray-100"
     >
+      <div
+        {...listeners}
+        className="h-6 w-4 border-l-6 border-r-6 border-gray-300 border-dotted mx-0.5 cursor-grab active:cursor-grabbing"
+      ></div>
       <div className="flex items-center gap-3">
         <button
           onClick={handleToggle}

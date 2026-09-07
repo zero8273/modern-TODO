@@ -12,12 +12,18 @@ export const useTodoManagement = () => {
       const savedTodos = JSON.parse(
         localStorage.getItem(LOCAL_STORAGE_KEY) || '[]',
       );
-      setTodos(savedTodos);
+      const sortedSavedTodos = [...savedTodos].sort(
+        (a, b) => a.order - b.order,
+      );
+      setTodos(sortedSavedTodos);
       try {
         const response = await fetch(API_URL);
         if (response.ok) {
           const serverTodos = await response.json();
-          setTodos(serverTodos);
+          const sortServerTodos = [...serverTodos].sort(
+            (a, b) => a.order - b.order,
+          );
+          setTodos(sortServerTodos);
           localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(serverTodos));
         }
       } catch (error) {
@@ -155,6 +161,51 @@ export const useTodoManagement = () => {
 
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(todos));
   };
+  const onReorder = async (activeID, overId) => {
+    if (!overId) return;
+
+    const activeIndex = todos.findIndex((todo) => todo.id === activeID);
+    const overIndex = todos.findIndex((todo) => todo.id === overId);
+
+    if (activeIndex === -1 || overIndex === -1 || activeIndex === overIndex) {
+      return;
+    }
+
+    const newTodos = [...todos];
+
+    const [movedTodo] = newTodos.splice(activeIndex, 1);
+
+    newTodos.splice(overIndex, 0, movedTodo);
+
+    const updatedTodos = newTodos.map((todo, index) => ({
+      ...todo,
+      order: index + 1,
+    }));
+
+    setTodos(updatedTodos);
+
+    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(updatedTodos));
+
+    try {
+      for (const todo of updatedTodos) {
+        const response = await fetch(`${API_URL}/${todo.id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            order: todo.order,
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error(`Не вдалося оновити todo ${todo.id}`);
+        }
+      }
+    } catch (error) {
+      console.error('Помилка сортування:', error);
+    }
+  };
 
   return {
     todos,
@@ -169,5 +220,6 @@ export const useTodoManagement = () => {
     toggleCompleted,
     handleUpdate,
     hasCompleted,
+    onReorder,
   };
 };
