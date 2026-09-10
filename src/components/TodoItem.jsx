@@ -56,7 +56,7 @@ export const TodoItem = ({ todo, onDelete, onToggleCompleted, onUpdate }) => {
       {...attributes}
       style={dragStyles}
       className="group flex items-center 
-    justify-between p-4 gap-3 bg-white dark:bg-page-dark rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300 border border-gray-100"
+     p-4 gap-3 bg-white dark:bg-page-dark rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300 border border-gray-100"
     >
       <div
         {...listeners}

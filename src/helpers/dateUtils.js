@@ -1,6 +1,6 @@
 const formatDateTime = (dateString) => {
   return new Date(dateString).toLocaleString('uk-UA', {
-    date: 'numeric',
+    day: 'numeric',
     month: 'long',
     year: 'numeric',
     hour: '2-digit',
