@@ -30,9 +30,10 @@ export const useTodoActions = ({
     const prevTodos = todos;
     const updatedTodos = todos.filter((todo) => todo.id !== id);
     setTodos(updatedTodos);
+    savetoLocalStorage(updatedTodos);
+    console.log(updatedTodos);
     try {
       await deleteTodo(id);
-      savetoLocalStorage(updatedTodos);
     } catch (error) {
       console.error('помилка видалення', error);
       setTodos(prevTodos);

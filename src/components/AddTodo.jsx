@@ -82,6 +82,7 @@ export function AddTodo({ onAdd }) {
         recognition.stop();
       }
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isListening]);
 
   const handleSubmit = (e) => {

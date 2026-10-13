@@ -1,3 +1,6 @@
+import NetworkProvider from '../providers/NetworkProvider';
+import NetworkNotification from './NetworkNotification';
+
 const ToggleTheme = ({ theme, toggleTheme }) => {
   return (
     <div className="mb-6">
@@ -10,6 +13,9 @@ const ToggleTheme = ({ theme, toggleTheme }) => {
           {theme === 'light' ? 'Светлая' : 'Темная'}
         </span>
       </div>
+      <NetworkProvider>
+        <NetworkNotification />
+      </NetworkProvider>
     </div>
   );
 };
